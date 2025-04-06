@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Podcast</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ✅ Move the header inside body -->
+
+
+<div class="container">
+    <h1>🌤️ Weather Podcast</h1>
+    <form id="weatherForm">
+        <input type="text" id="cityInput" name="city" placeholder="Enter city name" required />
+        <button type="submit">Get Weather</button>
+    </form>
+    <div id="weatherResult" class="result-box hidden"></div>
+</div>
+
+<script>
+    document.getElementById('weatherForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const city = document.getElementById('cityInput').value;
+        fetch(`/weather?city=${city}`)
+            .then(response => response.json())
+            .then(data => {
+                const desc = data.weather[0].description;
+                const temp = data.main.temp;
+                const podcast = `In ${city}, it's currently ${desc} with ${temp}°C.`;
+
+                document.getElementById('weatherResult').innerHTML = `<p>${podcast}</p>`;
+                document.getElementById('weatherResult').classList.remove("hidden");
+
+                // Podcast voice
+                const msg = new SpeechSynthesisUtterance(podcast);
+                window.speechSynthesis.speak(msg);
+            })
+            .catch(error => {
+                document.getElementById('weatherResult').innerHTML = `<p style="color:red;">City not found!</p>`;
+            });
+    });
+</script>
+
+</body>
+</html>
